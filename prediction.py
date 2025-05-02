@@ -73,7 +73,5 @@ def predict_data(request):
         "cost_per_piece": cost_per_piece
         }
 
-    
-    print(request)
 
     return response
