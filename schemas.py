@@ -10,9 +10,10 @@ class Data(BaseModel):
     medal_width: int
     medal_height: int
     medal_thickness: int
+    medal_material: str
     finish: str
     second_finish: str
-    double_finish: str
+    # double_finish: str
     ribbon_needed: str
     ribbon_no_of_colors: int
     ribbon_print: str

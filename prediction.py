@@ -9,7 +9,7 @@ def predict_data(request):
     columns = ['front_type', 'front_no_of_colors', 'front_personalisation',
                 'back_type', 'back_no_of_colors', 'back_personalisation', 
                 'medal_width', 'medal_height', 'medal_thickness', 
-                'finish', 'second_finish','double_finish', 
+                'medal_material','finish', 'second_finish',
                 'ribbon_needed', 'ribbon_no_of_colors', 'ribbon_print',
                 'no_of_ribbon_print_side', 'ribbon_width', 'ribbon_height', 
                 'packaging','quantity']
@@ -19,7 +19,7 @@ def predict_data(request):
         request.front_type, request.front_no_of_colors, request.front_personalisation,
         request.back_type, request.back_no_of_colors,request.back_personalisation,
         request.medal_width, request.medal_height, request.medal_thickness, 
-        request.finish, request.second_finish, request.double_finish, 
+        request.medal_material, request.finish, request.second_finish, 
         request.ribbon_needed, request.ribbon_no_of_colors, request.ribbon_print, 
         request.no_of_ribbon_print_side, request.ribbon_width, request.ribbon_height, 
         request.packaging, request.quantity
@@ -61,16 +61,20 @@ def predict_data(request):
     output = model.predict(predictor)
 
 
-    cost_per_piece = [round(pred, 2) for pred in output.tolist()]
+    total_costs = [round(pred, 2) for pred in output.tolist()]
+
+    # adjusted_total_cost = round(total_costs[0] * 1.10, 2)
 
     quantity = request.quantity
 
     # Handle single input — avoid divide-by-zero
-    total_costs = round(cost_per_piece[0] * quantity, 2) if quantity != 0 else 0.0
+    cost_per_piece = round(total_costs[0] / quantity, 2) if quantity != 0 else 0.0
+    # cost_per_piece = round(adjusted_total_cost/ quantity, 2) if quantity != 0 else 0.0
 
     response = {
-        "total_cost": total_costs,
-        "cost_per_piece": cost_per_piece[0]
+        "total_cost": total_costs[0],
+        # "total_cost": adjusted_total_cost,
+        "cost_per_piece": cost_per_piece
         }
 
     
