@@ -61,17 +61,19 @@ def predict_data(request):
     output = model.predict(predictor)
 
 
-    total_costs = [round(pred, 2) for pred in output.tolist()]
+    cost_per_piece = [round(pred, 2) for pred in output.tolist()]
 
     quantity = request.quantity
 
     # Handle single input — avoid divide-by-zero
-    cost_per_piece = round(total_costs[0] / quantity, 2) if quantity != 0 else 0.0
+    total_costs = round(cost_per_piece[0] * quantity, 2) if quantity != 0 else 0.0
 
     response = {
-        "total_cost": total_costs[0],
-        "cost_per_piece": cost_per_piece
+        "total_cost": total_costs,
+        "cost_per_piece": cost_per_piece[0]
         }
 
+    
+    print(request)
 
     return response
