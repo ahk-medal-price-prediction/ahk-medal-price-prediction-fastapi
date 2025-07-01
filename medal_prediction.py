@@ -3,7 +3,7 @@ import pandas as pd
 import pickle
 import xgboost as xgb
 
-def predict_data(request):
+def medal_predict_data(request):
     # Original input feature names (before encoding)
 
     columns = ['front_type', 'front_no_of_colors', 'front_personalisation',
@@ -28,7 +28,7 @@ def predict_data(request):
     predictor = pd.DataFrame(input, columns=columns)
 
     # OneHotEncoder
-    with open('encoders/OneHotEncoder.pkl', 'rb') as file:
+    with open('medal_encoders/OneHotEncoder.pkl', 'rb') as file:
         ohe = pickle.load(file)
 
     ohe_cols = ['front_personalisation', 'back_personalisation', 'finish', 'ribbon_print',
@@ -40,7 +40,7 @@ def predict_data(request):
     predictor = pd.concat([predictor.drop(columns=ohe_cols), x_ohe], axis=1)
 
     # LabelEncoder
-    with open('encoders/LabelEncoder.pkl', 'rb') as file:
+    with open('medal_encoders/LabelEncoder.pkl', 'rb') as file:
         label_encoders = pickle.load(file)
 
     for col, encoder in label_encoders.items():
@@ -48,7 +48,7 @@ def predict_data(request):
         predictor.drop(columns=[col], inplace=True)
 
     # StandardScaler 
-    with open('encoders/StandardScalar.pkl', 'rb') as file:
+    with open('medal_encoders/StandardScalar.pkl', 'rb') as file:
         scalers = pickle.load(file)
 
     for col, scaler in scalers.items():
@@ -57,7 +57,7 @@ def predict_data(request):
 
     # model prediction
     model = xgb.XGBRegressor()
-    model.load_model('xgb_model.json')
+    model.load_model('medal_xgb_model.json')
     output = model.predict(predictor)
 
 

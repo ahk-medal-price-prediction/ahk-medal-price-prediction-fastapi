@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from schemas import Data
-from prediction import predict_data
+from medal_prediction import medal_predict_data
+from mould_prediction import mould_predict_data
 
 app = FastAPI()
 
@@ -9,7 +10,15 @@ app = FastAPI()
 async def root():
     return {"Connection Status": "200 OK"}
 
-@app.post('/model_prediction')
-def model_prediction(request:Data):
-    data = predict_data(request)
+@app.post('/medal_prediction')
+def medal_prediction(request:Data):
+    data = medal_predict_data(request)
+    return data
+
+
+@app.post('/mould_prediction')
+def mould_prediction(request: Data):
+    # # Set quantity = 1
+    # request.quantity = 1
+    data = mould_predict_data(request)
     return data
