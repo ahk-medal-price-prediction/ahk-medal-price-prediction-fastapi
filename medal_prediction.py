@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pickle
-import xgboost as xgb
+# import xgboost as xgb
 
 def medal_predict_data(request):
     # Original input feature names (before encoding)
@@ -31,8 +31,13 @@ def medal_predict_data(request):
     with open('medal_encoders/OneHotEncoder.pkl', 'rb') as file:
         ohe = pickle.load(file)
 
+    # ohe_cols = ['front_personalisation', 'back_personalisation', 'finish', 'ribbon_print',
+    #             'second_finish', 'packaging', ]
+
     ohe_cols = ['front_personalisation', 'back_personalisation', 'finish', 'ribbon_print',
-                'second_finish', 'packaging', ]
+            'second_finish', 'packaging', 'front_type', 'front_no_of_colors', 'back_type', 
+        'back_no_of_colors', 'medal_material', 'ribbon_needed', 
+        'ribbon_no_of_colors','no_of_ribbon_print_side']
 
     x_ohe = ohe.transform(predictor[ohe_cols])
     x_ohe = pd.DataFrame(x_ohe, columns=ohe.get_feature_names_out(ohe_cols), index=predictor.index)
@@ -40,25 +45,30 @@ def medal_predict_data(request):
     predictor = pd.concat([predictor.drop(columns=ohe_cols), x_ohe], axis=1)
 
     # LabelEncoder
-    with open('medal_encoders/LabelEncoder.pkl', 'rb') as file:
-        label_encoders = pickle.load(file)
+    # with open('medal_encoders/LabelEncoder.pkl', 'rb') as file:
+    #     label_encoders = pickle.load(file)
 
-    for col, encoder in label_encoders.items():
-        predictor[col + '_le_encoded'] = encoder.transform(predictor[col])
-        predictor.drop(columns=[col], inplace=True)
+    # for col, encoder in label_encoders.items():
+    #     predictor[col + '_le_encoded'] = encoder.transform(predictor[col])
+    #     predictor.drop(columns=[col], inplace=True)
 
     # StandardScaler 
-    with open('medal_encoders/StandardScalar.pkl', 'rb') as file:
-        scalers = pickle.load(file)
+    # with open('medal_encoders/StandardScalar.pkl', 'rb') as file:
+    #     scalers = pickle.load(file)
 
-    for col, scaler in scalers.items():
-        predictor[col + '_scaled'] = scaler.transform(predictor[[col]]).flatten()
-        predictor.drop(columns=[col], inplace=True)
+    # for col, scaler in scalers.items():
+    #     predictor[col + '_scaled'] = scaler.transform(predictor[[col]]).flatten()
+    #     predictor.drop(columns=[col], inplace=True)
 
     # model prediction
-    model = xgb.XGBRegressor()
-    model.load_model('medal_xgb_model.json')
+    # model = xgb.XGBRegressor()
+    # model.load_model('medal_xgb_model.json')
+    # output = model.predict(predictor)
+
+    with open('gradient_boost_model.pkl', 'rb') as file:
+        model = pickle.load(file)
     output = model.predict(predictor)
+
 
 
     total_costs = [round(pred, 2) for pred in output.tolist()]
