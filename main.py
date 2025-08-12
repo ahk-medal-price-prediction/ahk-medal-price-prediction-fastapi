@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from schemas import Data
+from schemas import Data,mould_data
 from medal_prediction import medal_predict_data
 from mould_prediction import mould_predict_data
 
@@ -17,7 +17,7 @@ def medal_prediction(request:Data):
 
 
 @app.post('/mould_prediction')
-def mould_prediction(request: Data):
+def mould_prediction(request: mould_data):
     # # Set quantity = 1
     # request.quantity = 1
     data = mould_predict_data(request)

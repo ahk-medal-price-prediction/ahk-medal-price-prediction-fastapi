@@ -6,8 +6,16 @@ import xgboost as xgb
 def mould_predict_data(request):
     # Original input feature names (before encoding)
 
-    columns = ['front_type', 'front_no_of_colors', 'front_personalisation',
-                'back_type', 'back_no_of_colors', 'back_personalisation', 
+    # columns = ['front_type', 'front_no_of_colors', 'front_personalisation',
+    #             'back_type', 'back_no_of_colors', 'back_personalisation', 
+    #             'medal_width', 'medal_height', 'medal_thickness', 
+    #             'medal_material','finish', 'second_finish',
+    #             'ribbon_needed', 'ribbon_no_of_colors', 'ribbon_print',
+    #             'no_of_ribbon_print_side', 'ribbon_width', 'ribbon_height', 
+    #             'packaging','quantity']
+
+
+    columns = ['front_type', 'front_no_of_colors', 'back_type', 'back_no_of_colors', 
                 'medal_width', 'medal_height', 'medal_thickness', 
                 'medal_material','finish', 'second_finish',
                 'ribbon_needed', 'ribbon_no_of_colors', 'ribbon_print',
@@ -15,9 +23,20 @@ def mould_predict_data(request):
                 'packaging','quantity']
 
     # Prepare the input data
+    # input = [[
+    #     request.front_type, request.front_no_of_colors, request.front_personalisation,
+    #     request.back_type, request.back_no_of_colors,request.back_personalisation,
+    #     request.medal_width, request.medal_height, request.medal_thickness, 
+    #     request.medal_material, request.finish, request.second_finish, 
+    #     request.ribbon_needed, request.ribbon_no_of_colors, request.ribbon_print, 
+    #     request.no_of_ribbon_print_side, request.ribbon_width, request.ribbon_height, 
+    #     request.packaging, request.quantity
+    # ]]
+    
+    
     input = [[
-        request.front_type, request.front_no_of_colors, request.front_personalisation,
-        request.back_type, request.back_no_of_colors,request.back_personalisation,
+        request.front_type, request.front_no_of_colors, 
+        request.back_type, request.back_no_of_colors,
         request.medal_width, request.medal_height, request.medal_thickness, 
         request.medal_material, request.finish, request.second_finish, 
         request.ribbon_needed, request.ribbon_no_of_colors, request.ribbon_print, 
@@ -31,7 +50,11 @@ def mould_predict_data(request):
     with open('mould_encoders/OneHotEncoder.pkl', 'rb') as file:
         ohe = pickle.load(file)
 
-    ohe_cols = ['front_personalisation', 'back_personalisation', 'finish', 'ribbon_print',
+    # ohe_cols = ['front_personalisation', 'back_personalisation', 'finish', 'ribbon_print',
+    #             'second_finish', 'packaging', ]
+    
+    
+    ohe_cols = ['finish', 'ribbon_print',
                 'second_finish', 'packaging', ]
 
     x_ohe = ohe.transform(predictor[ohe_cols])
