@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pickle
-# import xgboost as xgb
+import xgboost as xgb
 
 def medal_predict_data(request):
     # Original input feature names (before encoding)
@@ -61,13 +61,13 @@ def medal_predict_data(request):
     #     predictor.drop(columns=[col], inplace=True)
 
     # model prediction
-    # model = xgb.XGBRegressor()
-    # model.load_model('medal_xgb_model.json')
-    # output = model.predict(predictor)
-
-    with open('gradient_boost_model.pkl', 'rb') as file:
-        model = pickle.load(file)
+    model = xgb.XGBRegressor()
+    model.load_model('medal_xgb_model.json')
     output = model.predict(predictor)
+
+    # with open('gradient_boost_model.pkl', 'rb') as file:
+    #     model = pickle.load(file)
+    # output = model.predict(predictor)
 
 
 
