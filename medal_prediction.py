@@ -52,6 +52,28 @@ def medal_predict_data(request):
     #     predictor[col + '_le_encoded'] = encoder.transform(predictor[col])
     #     predictor.drop(columns=[col], inplace=True)
 
+    
+    
+    # Apply binning + label encoding (same as training)
+    def create_bins_and_encode(col, start, end, step):
+        bins = list(range(start, end + step, step))
+        labels = [f"{i}-{i+step}" for i in range(start, end, step)]
+        binned = pd.cut(col, bins=bins, labels=labels, right=True, include_lowest=True)
+        
+        # Load the same LabelEncoder used in training
+        with open('medal_encoders/LabelEncoder.pkl', 'rb') as file:
+            label_encoders = pickle.load(file)
+        
+        col_name = f"bin_{col.name}"
+        encoder = label_encoders[col_name]   # must exist from training
+        return encoder.transform(binned.astype(str))  # ensure string for consistency
+
+    predictor["bin_medal_width_le_encoded"]   = create_bins_and_encode(predictor["medal_width"], 50, 100, 5)
+    predictor["bin_medal_height_le_encoded"]  = create_bins_and_encode(predictor["medal_height"], 50, 100, 5)
+    predictor["bin_medal_thickness_le_encoded"]  = create_bins_and_encode(predictor["medal_thickness"], 0, 20, 2)
+    predictor["bin_ribbon_width_le_encoded"]  = create_bins_and_encode(predictor["ribbon_width"], 0, 100, 5)
+    predictor["bin_ribbon_height_le_encoded"] = create_bins_and_encode(predictor["ribbon_height"], 0, 900, 5)
+
     # StandardScaler 
     # with open('medal_encoders/StandardScalar.pkl', 'rb') as file:
     #     scalers = pickle.load(file)
